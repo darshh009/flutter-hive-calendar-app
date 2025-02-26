@@ -5,6 +5,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter_calender/hive_objects/categories.dart';
 import 'package:hive_flutter_calender/hive_objects/event.dart';
 import 'package:hive_flutter_calender/widgets/calender.dart';
+import 'package:hive_flutter_calender/widgets/event.dart';
 
 // late initialize the boxes which are like tables stored and managed in database like in hive we call it boxes
 late Box<Categories> categoryBox;
@@ -44,7 +45,11 @@ class MyApp extends StatelessWidget {
             .apply(fontFamily: GoogleFonts.poppins().fontFamily),
       ),
       initialRoute: "/",
-      routes: {"/": (context) => const CalenderScreen()},
+      routes: {"/": (context) => const CalenderScreen(),
+        EventDetails.routeName: (context) => const EventDetails()
+
+
+      },
     );
   }
 }

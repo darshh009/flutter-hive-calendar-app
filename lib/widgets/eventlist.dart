@@ -39,7 +39,7 @@ class Eventlist extends StatelessWidget {
               ),
             );
           }
-          else {
+          else{
             return Padding(
               padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
               child: ListView.builder(

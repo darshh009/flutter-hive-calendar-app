@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter_calender/widgets/event.dart';
 import 'package:hive_flutter_calender/widgets/eventlist.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -74,7 +75,11 @@ class _CalenderScreenState extends State<CalenderScreen> {
                     shadowColor: Colors.purple.shade100,
                     backgroundColor: Color.fromARGB(150, 127, 127, 213)
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, EventDetails.routeName,arguments: EventArguments(daySelected: daySelected));
+
+
+                  },
                   label: Text(
                     "Add Event",
                     style: TextStyle(
