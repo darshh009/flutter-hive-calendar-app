@@ -26,8 +26,7 @@ class _EventDetailsState extends State<EventDetails> with Func {
   final TextEditingController descriptionController = TextEditingController();
   Categories? dropDownValue;
   Uint8List? imageBytes;
-
-
+  bool  completed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +150,7 @@ class _EventDetailsState extends State<EventDetails> with Func {
 
                   // date got runtime
                   Padding(
-                    padding: const EdgeInsets.only(top: 20),
+                    padding: const EdgeInsets.only(top: 5),
                     child: Row(
                       children: [
                         Icon(
@@ -164,7 +163,7 @@ class _EventDetailsState extends State<EventDetails> with Func {
                           child: Text(
                             DateFormat("EEEE, d MMMM").format(args.daySelected),
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 16,
                                 fontFamily: GoogleFonts.rowdies().fontFamily,
                                 color: Color.fromARGB(226, 29, 41, 81)),
                           ),
@@ -174,7 +173,7 @@ class _EventDetailsState extends State<EventDetails> with Func {
                   ),
 
                   Padding(
-                    padding: const EdgeInsets.only(top: 25),
+                    padding: const EdgeInsets.only(top: 18),
                     child: TextField(
                       style: TextStyle(
                           fontSize: 18,
@@ -207,7 +206,7 @@ class _EventDetailsState extends State<EventDetails> with Func {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 25),
+                    padding: const EdgeInsets.only(top: 18),
                     child: TextField(
                       style: TextStyle(
                           fontSize: 18,
@@ -241,7 +240,7 @@ class _EventDetailsState extends State<EventDetails> with Func {
                   ),
 
                   Padding(
-                    padding: const EdgeInsets.only(top: 25),
+                    padding: const EdgeInsets.only(top: 20),
                     child: ListTile(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
@@ -256,38 +255,100 @@ class _EventDetailsState extends State<EventDetails> with Func {
                         Icons.file_upload,
                         color: Colors.white,
                       ),
-                      onTap: () async{
-                        FilePickerResult? result=await FilePicker.platform.pickFiles();
-                        if(result!=null){
+                      onTap: () async {
+                        FilePickerResult? result =
+                            await FilePicker.platform.pickFiles();
+                        if (result != null) {
                           //pick path of image and import it to file type
-                          File file=File(result.files.single.path!);
-                           imageBytes=await file.readAsBytes();
-                          setState(() {
-                          });
-                        }
-                        else{
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar( behavior: SnackBarBehavior.floating,
+                          File file = File(result.files.single.path!);
+                          imageBytes = await file.readAsBytes();
+                          setState(() {});
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            behavior: SnackBarBehavior.floating,
                             content: Text(
                               "Image not found or Error to upload",
                               style: TextStyle(fontSize: 16),
                             ),
                             backgroundColor: Colors.red,
                             duration: Duration(seconds: 2),
-
-
-
-                          )
-
-
-
-
-                          );
+                          ));
                         }
                       },
                     ),
                   ),
-                  (imageBytes!=null)?Image.memory(imageBytes!,width: 100):
-                  const SizedBox.shrink()
+                  if (imageBytes != null) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(top:10),
+                      child: Image.memory(imageBytes!, width: 100),
+                    ),
+                    Builder(
+                      builder: (context) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text("Image Uploaded Successfully",
+                                style: TextStyle(
+                                 fontSize: 16,
+                                ),
+
+                                ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              side: BorderSide(
+                                width: 1,
+                                color: Colors.green
+
+                              )
+                              
+                            ),
+                            duration: Duration(seconds: 3),
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Colors.green.shade600,
+
+
+                            ),
+                          );
+                        });
+                        return SizedBox
+                            .shrink(); // Returning a widget to satisfy Column
+                      },
+                    ),
+                  ] else
+                    const SizedBox.shrink(),
+                  
+                  Padding(
+                    padding: const EdgeInsets.only(top:14),
+                    child: SwitchListTile(
+                      tileColor: Colors.grey.shade200,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)
+                      
+                    ),
+                    title: Text("Event Completed?",
+
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.deepPurple.shade700,
+                        fontWeight: FontWeight.bold
+
+                      ),
+
+
+                        ),
+
+                    value: completed, onChanged:
+
+                    (bool? value){
+                      setState(() {
+                        completed=value!;
+                      });
+                    }
+
+
+
+                    ),
+                  )
                 ],
               ),
             ),
@@ -295,8 +356,9 @@ class _EventDetailsState extends State<EventDetails> with Func {
         ));
   }
 
-  /// function to show alert dialog for adding new category
 
+
+  /// function to show alert dialog for adding new category
   addNewCategory(BuildContext context) {
     return showDialog(
         context: context,
