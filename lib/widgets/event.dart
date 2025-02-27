@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter_calender/func.dart';
 import 'package:hive_flutter_calender/hive_objects/categories.dart';
+import 'package:hive_flutter_calender/hive_objects/event.dart';
 import 'package:hive_flutter_calender/main.dart';
 import 'package:intl/intl.dart';
 
@@ -26,7 +28,7 @@ class _EventDetailsState extends State<EventDetails> with Func {
   final TextEditingController descriptionController = TextEditingController();
   Categories? dropDownValue;
   Uint8List? imageBytes;
-  bool  completed = false;
+  bool completed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +281,7 @@ class _EventDetailsState extends State<EventDetails> with Func {
                   ),
                   if (imageBytes != null) ...[
                     Padding(
-                      padding: const EdgeInsets.only(top:10),
+                      padding: const EdgeInsets.only(top: 10),
                       child: Image.memory(imageBytes!, width: 100),
                     ),
                     Builder(
@@ -287,26 +289,19 @@ class _EventDetailsState extends State<EventDetails> with Func {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text("Image Uploaded Successfully",
+                              content: Text(
+                                "Image Uploaded Successfully",
                                 style: TextStyle(
-                                 fontSize: 16,
+                                  fontSize: 16,
                                 ),
-
-                                ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              side: BorderSide(
-                                width: 1,
-                                color: Colors.green
-
-                              )
-                              
-                            ),
-                            duration: Duration(seconds: 3),
-                            behavior: SnackBarBehavior.floating,
-                            backgroundColor: Colors.green.shade600,
-
-
+                              ),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  side: BorderSide(
+                                      width: 1, color: Colors.green)),
+                              duration: Duration(seconds: 3),
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor: Colors.green.shade600,
                             ),
                           );
                         });
@@ -316,38 +311,89 @@ class _EventDetailsState extends State<EventDetails> with Func {
                     ),
                   ] else
                     const SizedBox.shrink(),
-                  
+
                   Padding(
-                    padding: const EdgeInsets.only(top:14),
+                    padding: const EdgeInsets.only(top: 14),
                     child: SwitchListTile(
-                      tileColor: Colors.grey.shade200,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)
-                      
-                    ),
-                    title: Text("Event Completed?",
-
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.deepPurple.shade700,
-                        fontWeight: FontWeight.bold
-
-                      ),
-
-
+                        tileColor: Color(0x80D3D3D3),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        title: Text(
+                          "Event Completed ?",
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.deepPurple.shade700,
+                              fontWeight: FontWeight.bold),
                         ),
+                        value: completed,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            completed = value!;
+                          });
+                        }),
+                  ),
 
-                    value: completed, onChanged:
+                  Container(
+                    margin: EdgeInsets.only(top: 70),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(7),
+                        gradient: LinearGradient(
+                          colors: [
+                            Color.fromARGB(255, 140, 166, 219), // Light Blue
+                            Color.fromARGB(255, 185, 147, 214),
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                              blurRadius: 7,
+                              spreadRadius: 1,
+                              color: Colors.grey.shade900.withAlpha(127),
+                              offset: Offset(0, 3))
+                        ]),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            backgroundColor: Colors.transparent,
+                            fixedSize: Size(
+                                MediaQuery.of(context).size.width * 0.9, 50),
+                            foregroundColor: Colors.white,
+                            shadowColor: Colors.transparent),
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate() &&
+                              dropDownValue != null) {
+                            await addEvent(
+                                Event(
+                                    HiveList(categoryBox),
+                                    args.daySelected,
+                                    eventController.text,
+                                    descriptionController.text,
+                                    imageBytes,
+                                    completed),
+                                dropDownValue!);
 
-                    (bool? value){
-                      setState(() {
-                        completed=value!;
-                      });
-                    }
-
-
-
-                    ),
+                            if (context.mounted){
+                              AwesomeDialog(
+                                context:context,
+                                dialogType: DialogType.success,
+                                animType: AnimType.topSlide,
+                                title:"Success",
+                                desc: 'Event added successfully !',
+                                btnOkOnPress: () {
+                                  Navigator.pop(context);
+                                }
+                              ).show();
+                            }
+                          }
+                        },
+                        child: Text(
+                          "Add Event",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w700),
+                        )),
                   )
                 ],
               ),
@@ -355,8 +401,6 @@ class _EventDetailsState extends State<EventDetails> with Func {
           ),
         ));
   }
-
-
 
   /// function to show alert dialog for adding new category
   addNewCategory(BuildContext context) {

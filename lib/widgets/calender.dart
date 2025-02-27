@@ -76,7 +76,14 @@ class _CalenderScreenState extends State<CalenderScreen> {
                     backgroundColor: Color.fromARGB(150, 127, 127, 213)
                   ),
                   onPressed: () {
-                    Navigator.pushNamed(context, EventDetails.routeName,arguments: EventArguments(daySelected: daySelected));
+                    Navigator.pushNamed(context, EventDetails.routeName,arguments: EventArguments(daySelected:DateTime.utc(
+                        daySelected.year
+                        ,daySelected.month,
+                        daySelected.day
+
+
+
+                    )));
 
 
                   },

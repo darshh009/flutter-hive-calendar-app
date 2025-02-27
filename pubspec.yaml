@@ -44,6 +44,9 @@ dependencies:
   empty_widget: ^0.0.5
   file_picker: ^9.0.1
   flutter_launcher_icons: ^0.14.3
+  awesome: ^0.0.3
+  dialog: ^0.8.0
+  awesome_dialog: ^3.2.1
 
 dev_dependencies:
   flutter_test:
