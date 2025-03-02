@@ -4,6 +4,7 @@ import 'package:hive_flutter_calender/widgets/eventlist.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalenderScreen extends StatefulWidget {
+  static const routeName="/calender";
   const CalenderScreen({super.key});
 
   @override
@@ -80,10 +81,9 @@ class _CalenderScreenState extends State<CalenderScreen> {
                         daySelected.year
                         ,daySelected.month,
                         daySelected.day
-
-
-
-                    )));
+                    ), view: false,
+                      event: null
+                    ));
 
 
                   },

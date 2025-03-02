@@ -20,7 +20,7 @@ mixin Func {
     await categoryBox.add(category);
   }
 
-  /// fetch all events from vents table by date
+  /// fetch all events from events table by date
   List<Event> getEventsByDate(DateTime dateTime) {
     return eventBox.values.where((event) => event.date == dateTime).toList();
   }

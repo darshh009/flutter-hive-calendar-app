@@ -46,7 +46,8 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: "/",
       routes: {"/": (context) => const CalenderScreen(),
-        EventDetails.routeName: (context) => const EventDetails()
+        EventDetails.routeName: (context) => const EventDetails(),
+        CalenderScreen.routeName: (context) => const CalenderScreen(),
 
 
       },

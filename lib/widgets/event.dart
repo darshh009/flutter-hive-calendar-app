@@ -10,6 +10,7 @@ import 'package:hive_flutter_calender/func.dart';
 import 'package:hive_flutter_calender/hive_objects/categories.dart';
 import 'package:hive_flutter_calender/hive_objects/event.dart';
 import 'package:hive_flutter_calender/main.dart';
+import 'package:hive_flutter_calender/widgets/calender.dart';
 import 'package:intl/intl.dart';
 
 class EventDetails extends StatefulWidget {
@@ -22,6 +23,13 @@ class EventDetails extends StatefulWidget {
 }
 
 class _EventDetailsState extends State<EventDetails> with Func {
+  DateTime daySelected = DateTime.utc(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+
+
+  bool viewed=false;
+  bool _isSnackbarShown = false;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController categoryController = TextEditingController();
   final TextEditingController eventController = TextEditingController();
@@ -33,6 +41,18 @@ class _EventDetailsState extends State<EventDetails> with Func {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as EventArguments;
+
+    if(args.view && !viewed){
+      setState(() {
+        dropDownValue=args.event!.category[0];
+        eventController.text=args.event!.eventName;
+        descriptionController.text=args.event!.eventDescription;
+        imageBytes=args.event!.file;
+        completed=args.event!.completed;
+        viewed=true;
+      });
+
+    }
 
     return Scaffold(
         appBar: AppBar(
@@ -62,7 +82,9 @@ class _EventDetailsState extends State<EventDetails> with Func {
           ),
           actions: [
             IconButton(
-                onPressed: () {},
+                onPressed: (args.view)? () {
+                  updateExistingEvent(args, context);
+                }:null,
                 icon: Icon(
                   Icons.save,
                   color: Colors.indigo.shade800,
@@ -286,32 +308,31 @@ class _EventDetailsState extends State<EventDetails> with Func {
                     ),
                     Builder(
                       builder: (context) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                "Image Uploaded Successfully",
-                                style: TextStyle(
-                                  fontSize: 16,
+                        if (!_isSnackbarShown) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "Image Uploaded Successfully",
+                                  style: TextStyle(fontSize: 16),
                                 ),
-                              ),
-                              shape: RoundedRectangleBorder(
+                                shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5),
-                                  side: BorderSide(
-                                      width: 1, color: Colors.green)),
-                              duration: Duration(seconds: 3),
-                              behavior: SnackBarBehavior.floating,
-                              backgroundColor: Colors.green.shade600,
-                            ),
-                          );
-                        });
-                        return SizedBox
-                            .shrink(); // Returning a widget to satisfy Column
+                                  side: BorderSide(width: 1, color: Colors.green),
+                                ),
+                                duration: Duration(seconds: 3),
+                                behavior: SnackBarBehavior.floating,
+                                backgroundColor: Colors.green.shade600,
+                              ),
+                            );
+                            _isSnackbarShown = true; // Set flag to true after showing snackbar
+                          });
+                        }
+                        return SizedBox.shrink();
                       },
                     ),
                   ] else
                     const SizedBox.shrink(),
-
                   Padding(
                     padding: const EdgeInsets.only(top: 14),
                     child: SwitchListTile(
@@ -362,30 +383,65 @@ class _EventDetailsState extends State<EventDetails> with Func {
                                 MediaQuery.of(context).size.width * 0.9, 50),
                             foregroundColor: Colors.white,
                             shadowColor: Colors.transparent),
-                        onPressed: () async {
+                        onPressed:(args.view)? null :() async {
                           if (_formKey.currentState!.validate() &&
-                              dropDownValue != null) {
+                              dropDownValue != null &&
+                              eventController.text.trim().isNotEmpty &&
+                              descriptionController.text.trim().isNotEmpty) {
                             await addEvent(
-                                Event(
-                                    HiveList(categoryBox),
-                                    args.daySelected,
-                                    eventController.text,
-                                    descriptionController.text,
-                                    imageBytes,
-                                    completed),
-                                dropDownValue!);
+                              Event(
+                                HiveList(categoryBox),
+                                args.daySelected,
+                                eventController.text.trim(),
+                                descriptionController.text.trim(),
+                                imageBytes,
+                                completed,
+                              ),
+                              dropDownValue!,
+                            );
 
-                            if (context.mounted){
+                            if (context.mounted) {
+                              // Ensure widget is still mounted
                               AwesomeDialog(
-                                context:context,
+                                context: context,
                                 dialogType: DialogType.success,
                                 animType: AnimType.topSlide,
-                                title:"Success",
-                                desc: 'Event added successfully !',
+                                title: "Success",
+                                desc: "Event added successfully!",
                                 btnOkOnPress: () {
-                                  Navigator.pop(context);
-                                }
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      CalenderScreen.routeName,
+                                      (route) => false);
+                                },
                               ).show();
+                            }
+                          } else {
+                            if (context.mounted) {
+                              // Ensure widget is still mounted
+                              AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.error,
+                                  animType: AnimType.topSlide,
+                                  title: "Error",
+                                  desc: "Please fill all event details.",
+                                  btnOkOnPress: () {
+                                    Navigator.pushNamed(
+                                        context, EventDetails.routeName,
+                                        arguments: EventArguments(
+                                            daySelected: DateTime.utc(
+                                                daySelected.year,
+                                                daySelected.month,
+                                                daySelected.day),
+                                            view: false,
+                                            event: null));
+                                  },
+                                  btnOkColor: Colors.red,
+                                  titleTextStyle: TextStyle(
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.pink,
+                                  )).show();
                             }
                           }
                         },
@@ -401,6 +457,37 @@ class _EventDetailsState extends State<EventDetails> with Func {
           ),
         ));
   }
+  /// function for updating existing event
+  updateExistingEvent(EventArguments args,BuildContext context){
+    args.event?.category=HiveList(categoryBox);
+    args.event?.eventName=eventController.text.trim();
+    args.event?.eventDescription=descriptionController.text.trim();
+    args.event?.file=imageBytes;
+    args.event?.completed=completed;
+    updateEvent(args.event!,dropDownValue!);
+    if(context.mounted){
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.success,
+        animType: AnimType.rightSlide,
+        dialogBackgroundColor: Colors.green.shade100,
+        title: "Event Updated Successfully",
+        btnOkOnPress: (){
+          Navigator.pop(context);
+        }
+      ).show();
+    }
+
+
+
+
+
+  }
+
+
+
+
+
 
   /// function to show alert dialog for adding new category
   addNewCategory(BuildContext context) {
@@ -495,6 +582,9 @@ class _EventDetailsState extends State<EventDetails> with Func {
 
 class EventArguments {
   final DateTime daySelected;
+  final Event? event;
+  final bool view;
 
-  EventArguments({required this.daySelected});
+  EventArguments(
+      {required this.daySelected, required this.view, required this.event});
 }
