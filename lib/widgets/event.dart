@@ -12,6 +12,7 @@ import 'package:hive_flutter_calender/hive_objects/event.dart';
 import 'package:hive_flutter_calender/main.dart';
 import 'package:hive_flutter_calender/widgets/calender.dart';
 import 'package:intl/intl.dart';
+import 'package:status_alert/status_alert.dart';
 
 class EventDetails extends StatefulWidget {
   const EventDetails({super.key});
@@ -91,7 +92,11 @@ class _EventDetailsState extends State<EventDetails> with Func {
                   size: 26,
                 )),
             IconButton(
-                onPressed: () {},
+                onPressed: (args.view)? () {
+                  deleteExistingEvent(args, context);
+
+
+                }: null,
                 icon: Icon(
                   Icons.delete,
                   color: Colors.red.shade900,
@@ -275,7 +280,10 @@ class _EventDetailsState extends State<EventDetails> with Func {
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.w800),
                       ),
-                      trailing: Icon(
+                      trailing: (imageBytes!=null)?Icon(Icons.done_outline_rounded,
+                      color: Colors.white,
+
+                      ):Icon(
                         Icons.file_upload,
                         color: Colors.white,
                       ),
@@ -477,13 +485,127 @@ class _EventDetailsState extends State<EventDetails> with Func {
         }
       ).show();
     }
+  }
+
+  /// delete the event using custom function
+
+  deleteExistingEvent(EventArguments args,BuildContext context){
+    return showDialog(context: context, builder: (context){
+      return AlertDialog(
+        title: const Text("Calender App",
+        style: TextStyle(
+          fontSize: 18,
+          color: Colors.purple,
+          fontWeight:FontWeight.bold
+        ),
+
+        ),
+        backgroundColor: Colors.purple.shade50,
+        content: Text("Do you Want to delete this event ? ",
+        style: TextStyle(
+          fontSize: 18,
+          fontFamily: GoogleFonts.poppins().fontFamily,
+
+        ),
+
+
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 4,
+                      backgroundColor: Color(0xff1c2841),
+                      foregroundColor: Colors.white,
+                      shadowColor: Colors.blue.shade400,
 
 
 
+
+                    ),
+
+
+                    onPressed: (){
+                      deleteEvent(args.event!);
+                      if(context.mounted){
+                        StatusAlert.show(context,
+                          title: "Calender App",
+                          subtitle: "Event deleted!",
+                          duration: Duration(seconds: 2),
+                          configuration:
+                            const IconConfiguration(icon:Icons.done),
+                          maxWidth: 260,
+                        );
+
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+
+
+
+
+
+
+                      }
+
+
+
+                }, child:Text("Yes",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16
+
+                ),
+
+                )),
+              ),
+
+
+
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 4,
+                    backgroundColor: Color(0xff2f847c),
+                    foregroundColor: Colors.white,
+                    shadowColor: Colors.green.shade500,
+
+
+
+
+                  ),
+
+
+                  onPressed: (){
+                    Navigator.pop(context);
+
+
+
+                  }, child:Text("No",
+                style: TextStyle(
+                    color: Colors.white,
+                  fontSize: 16
+
+                ),
+
+              ))
+            ],
+          ),
+
+          
+        ],
+
+
+
+
+      );
+
+    });
 
 
   }
-
 
 
 

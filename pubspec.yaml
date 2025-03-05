@@ -47,6 +47,7 @@ dependencies:
   awesome: ^0.0.3
   dialog: ^0.8.0
   awesome_dialog: ^3.2.1
+  status_alert: ^1.0.1
 
 dev_dependencies:
   flutter_test:
