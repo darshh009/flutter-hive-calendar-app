@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter_calender/hive_objects/categories.dart';
 import 'package:hive_flutter_calender/hive_objects/event.dart';
 import 'package:hive_flutter_calender/widgets/calender.dart';
+import 'package:hive_flutter_calender/widgets/categories_detail.dart';
 import 'package:hive_flutter_calender/widgets/event.dart';
 
 // late initialize the boxes which are like tables stored and managed in database like in hive we call it boxes
@@ -14,19 +18,42 @@ late Box<Event> eventBox;
 // name of the boxes
 const String categoryName = "categories";
 const String eventName = "events";
+const customKey="calender";
 
 void main() async {
-  await Hive.initFlutter();
+  WidgetsFlutterBinding.ensureInitialized(); // ✅ Ensure Flutter binding is initialized
 
+  const secureStorage = FlutterSecureStorage();
+  final encryptionKeyString = await secureStorage.read(key: customKey);
+
+  if (encryptionKeyString == null) {
+    final key = Hive.generateSecureKey();
+    await secureStorage.write(key: customKey, value: base64UrlEncode(key));
+  }
+
+  final key = await secureStorage.read(key: customKey);
+  final encryptionKeyUIntList = base64Url.decode(key!);
+
+  await Hive.initFlutter();
   Hive.registerAdapter<Categories>(CategoryAdapter());
   Hive.registerAdapter<Event>(EventAdapter());
 
-  // initialize the boxes
-  categoryBox = await Hive.openBox<Categories>(categoryName);
-  eventBox = await Hive.openBox<Event>(eventName);
+  // Open the boxes with encryption
+  categoryBox = await Hive.openBox<Categories>(
+    categoryName,
+    encryptionCipher: HiveAesCipher(encryptionKeyUIntList),
+  );
+  eventBox = await Hive.openBox<Event>(
+    eventName,
+    encryptionCipher: HiveAesCipher(encryptionKeyUIntList),
+  );
 
-  runApp(const MyApp());
+  categoryBox.compact();
+  eventBox.compact();
+
+  runApp(const MyApp()); // ✅ Run app after everything is initialized
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -48,7 +75,7 @@ class MyApp extends StatelessWidget {
       routes: {"/": (context) => const CalenderScreen(),
         EventDetails.routeName: (context) => const EventDetails(),
         CalenderScreen.routeName: (context) => const CalenderScreen(),
-
+        CategoryDetails.routeName:(context) => const CategoryDetails()
 
       },
     );

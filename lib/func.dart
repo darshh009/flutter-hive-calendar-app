@@ -41,11 +41,13 @@ mixin Func {
   /// to search for a event
 
   List<Event> searchEvent(String searchWord) {
+    String lowerSearchWord = searchWord.toLowerCase();
+
     return eventBox.values
         .where((event) =>
-            event.eventName.contains(searchWord) ||
-            event.eventDescription.contains(searchWord) ||
-            event.category[0].name.contains(searchWord))
+            event.eventName.toLowerCase().contains(lowerSearchWord) ||
+            event.eventDescription.toLowerCase().contains(lowerSearchWord) ||
+            event.category[0].name.toLowerCase().contains(lowerSearchWord))
         .toList();
   }
 

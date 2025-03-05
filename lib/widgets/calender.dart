@@ -12,6 +12,10 @@ class CalenderScreen extends StatefulWidget {
 }
 
 class _CalenderScreenState extends State<CalenderScreen> {
+  bool search=false;
+  bool viewAll=false;
+  bool filter=false;
+  TextEditingController searchController=TextEditingController();
   DateTime daySelected = DateTime.utc(
       DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
@@ -31,7 +35,40 @@ class _CalenderScreenState extends State<CalenderScreen> {
             end: Alignment.bottomRight,
           )),
         ),
-        title: Text(
+        title: (search)? Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: TextField(
+            onChanged: (value){
+              setState(() {
+                viewAll=false;
+                filter=true;
+
+
+              });
+
+
+
+            },
+            controller: searchController,
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black
+
+            ),
+            cursorColor: Colors.black,
+            decoration: InputDecoration(
+              hintText: "Search Here",
+              hintStyle: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade600
+
+
+              ),
+              )
+          ),
+        ):Text(
           "Calender App",
           style: TextStyle(
             fontSize: 20,
@@ -39,8 +76,32 @@ class _CalenderScreenState extends State<CalenderScreen> {
           ),
         ),
         actions: [
+          (search)?IconButton(
+            onPressed: () {
+              setState(() {
+                search=false;
+              });
+
+
+            },
+            icon: Padding(
+              padding: const EdgeInsets.only(top: 4, right: 10),
+              child: Icon(
+                Icons.cancel,
+                color: Colors.black54,
+                size: 25,
+              ),
+            ),
+          ):
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                search=true;
+                viewAll=true;
+              });
+
+
+            },
             icon: Padding(
               padding: const EdgeInsets.only(top: 4, right: 10),
               child: Icon(
@@ -55,50 +116,61 @@ class _CalenderScreenState extends State<CalenderScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            TableCalendar(
-              focusedDay: daySelected,
-              firstDay: DateTime.utc(2025, 1, 1),
-              lastDay: DateTime.utc(2035, 1, 1),
-              currentDay: daySelected,
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  daySelected = selectedDay;
-                });
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 20, top: 5),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 5,
-                    shadowColor: Colors.purple.shade100,
-                    backgroundColor: Color.fromARGB(150, 127, 127, 213)
+            Visibility(
+              visible: !search,
+              child: Column(
+                children: [
+                  TableCalendar(
+                    focusedDay: daySelected,
+                    firstDay: DateTime.utc(2025, 1, 1),
+                    lastDay: DateTime.utc(2035, 1, 1),
+                    currentDay: daySelected,
+                    onDaySelected: (selectedDay, focusedDay) {
+                      setState(() {
+                        daySelected = selectedDay;
+                      });
+                    },
                   ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, EventDetails.routeName,arguments: EventArguments(daySelected:DateTime.utc(
-                        daySelected.year
-                        ,daySelected.month,
-                        daySelected.day
-                    ), view: false,
-                      event: null
-                    ));
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20, top: 5),
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          elevation: 5,
+                          shadowColor: Colors.purple.shade100,
+                          backgroundColor: Color.fromARGB(150, 127, 127, 213)
+                        ),
+                        onPressed: () {
+                          Navigator.pushNamed(context, EventDetails.routeName,arguments: EventArguments(daySelected:DateTime.utc(
+                              daySelected.year
+                              ,daySelected.month,
+                              daySelected.day
+                          ), view: false,
+                            event: null
+                          ));
 
 
-                  },
-                  label: Text(
-                    "Add Event",
-                    style: TextStyle(
-                        fontSize: 15, color: Colors.white,
-                    fontWeight: FontWeight.bold),
+                        },
+                        label: Text(
+                          "Add Event",
+                          style: TextStyle(
+                              fontSize: 15, color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                        ),
+                        icon: Icon(Icons.add,
+                            size: 22, color: Colors.white),
+                      ),
+                    ),
                   ),
-                  icon: Icon(Icons.add,
-                      size: 22, color: Colors.white),
-                ),
+                ],
               ),
             ),
-            Eventlist(date: DateTime.utc(daySelected.year,daySelected.month,daySelected.day))
+            Eventlist(
+              all: viewAll,
+                filter: filter,
+                searchTerm: searchController.text,
+                date: DateTime.utc(daySelected.year,daySelected.month,daySelected.day))
 
 
           ],

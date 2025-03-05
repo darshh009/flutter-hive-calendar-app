@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter_calender/func.dart';
+import 'package:hive_flutter_calender/widgets/categories_detail.dart';
 import 'package:hive_flutter_calender/widgets/event.dart';
 import 'package:intl/intl.dart';
 import 'package:hive_flutter_calender/hive_objects/event.dart';
@@ -10,7 +11,10 @@ import 'package:hive_flutter_calender/main.dart';
 
 class Eventlist extends StatelessWidget with Func{
   final DateTime date;
-  const Eventlist({super.key, required this.date});
+  final bool all;
+  final bool filter;
+  final String searchTerm;
+  const Eventlist({super.key, required this.date,required this.all,required this.filter,required this.searchTerm});
 
   @override
   Widget build(BuildContext context){
@@ -18,7 +22,7 @@ class Eventlist extends StatelessWidget with Func{
         valueListenable: eventBox.listenable(),
         builder: (context, box, widget){
           // this list will hold all the events in event box
-          List<Event> events=getEventsByDate(date);
+          List<Event> events=(all)?box.values.toList():(filter)?searchEvent(searchTerm) : getEventsByDate(date);
           if (events.isEmpty){
             return Padding(
               padding: const EdgeInsets.only(top: 20,left: 5),
@@ -127,7 +131,17 @@ class Eventlist extends StatelessWidget with Func{
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.w500),
                                           ),
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            Navigator.pushNamed(context, CategoryDetails.routeName,
+                                            arguments: CategoryArguments(category: events[index].category[0].name)
+                                            
+                                            );
+
+
+
+
+
+                                          },
                                           color: WidgetStateProperty.all<Color>(
                                               Colors.deepPurpleAccent.shade200),
                                         )

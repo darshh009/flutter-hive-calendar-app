@@ -536,9 +536,30 @@ class _EventDetailsState extends State<EventDetails> with Func {
                           title: "Calender App",
                           subtitle: "Event deleted!",
                           duration: Duration(seconds: 2),
+                          backgroundColor: Colors.purple.shade50,
+                          titleOptions: StatusAlertTextConfiguration(
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.blue.shade900
+
+                            )
+
+                          ),
+
+                          subtitleOptions: StatusAlertTextConfiguration(
+                            style: TextStyle(
+
+                              fontSize: 20,
+                              fontFamily: GoogleFonts.poppins().fontFamily,
+                              color: Colors.purple.shade900
+                            )
+
+                          ),
                           configuration:
                             const IconConfiguration(icon:Icons.done),
                           maxWidth: 260,
+
                         );
 
                         Navigator.pop(context);
