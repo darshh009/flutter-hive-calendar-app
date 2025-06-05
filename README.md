@@ -39,7 +39,7 @@ _Add images to the `assets/` folder and update the paths below._
 
 <p align="center">
   <img src="assets/home_screen.png" alt="Home Screen" width="40%" style="display:inline-block; margin-right: 30px;"/>
-  <img src="assets/add_event.png" alt="Add Event Screen" width="40%" style="display:inline-block;"/>
+  <img src="assets/add_event.png" alt="Add Event Screen" width="40%" style="display:inline-block;margin-left: 30px;"/>
 </p>
 
 ---
