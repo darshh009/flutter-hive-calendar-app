@@ -38,10 +38,10 @@ This app allows users to **add, view, search, and manage events** with support f
 _Add images to the `assets/` folder and update the paths below._
 
 ### 🏠 Home Screen
-![Home Screen](assets/home_screen.png)
+<img src="assets/home_screen.png" alt="Home Screen" width="400"/>
 
 ### ➕ Add Event Screen
-![Add Event Screen](assets/add_event.png)
+<img src="assets/add_events.png" alt="Home Screen" width="400"/>
 
 ---
 
