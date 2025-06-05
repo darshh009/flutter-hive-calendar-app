@@ -1,16 +1,74 @@
-# hive_flutter_calender
+# Flutter Hive Calendar App 📅
 
-A new Flutter project.
+A Flutter-based **Calendar Events App** using Hive for local storage.  
+This app allows users to **add, view, search, and manage events** with support for event descriptions and file uploads — all stored offline using Hive.
 
-## Getting Started
+## ✨ Features
 
-This project is a starting point for a Flutter application.
+- 📅 Calendar UI for browsing events  
+- ➕ Add events with:
+  - 🏷️ Event title
+  - 📝 Description
+  - 📁 File upload (e.g. PDF, image)
+- 🔍 Search for events by keyword  
+- 🏠 View all events on the home screen  
+- 📱 Offline data storage using Hive  
+- 🧹 Clean architecture and modular code structure  
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Tech Stack
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+| Tech               | Description                                      |
+|--------------------|--------------------------------------------------|
+| Flutter            | Cross-platform UI framework                      |
+| Dart               | Language used for Flutter                        |
+| Hive               | Lightweight, NoSQL database for local storage    |
+| hive_flutter       | Flutter integration for Hive                     |
+| Flutter Widgets    | For building responsive and intuitive UI         |
+| Clean Architecture | Separation of concerns for scalability and maintenance |
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📸 Screenshots
+
+### Home Screen
+![Home Screen](assets/home_screen.png)
+
+### Add Event Screen
+![Add Event Screen](assets/add_event.png)
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Flutter SDK (latest stable version)
+- Dart SDK
+- Android Studio/VSCode with Flutter plugin
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/your-username/flutter-hive-calendar-app.git
+
+'Install dependencies:
+
+bash
+flutter pub get
+Run the app:
+
+bash
+flutter run
+
+🏗️ Project Structure
+lib/
+├── core/              # Core functionalities
+├── data/              # Data layer (Hive models, repositories)
+├── domain/            # Business logic
+├── presentation/      # UI layer (screens, widgets)
+└── main.dart          # App entry point
+
+📝 License
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+📬 Contact
+For questions or feedback, please contact:
+Email: darshhwork@gmail.com
+```
