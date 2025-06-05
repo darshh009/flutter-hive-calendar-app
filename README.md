@@ -33,6 +33,10 @@ This app allows users to **add, view, search, and manage events** with support f
 
 ---
 
+## 📸 Screenshots
+
+_Add images to the `assets/` folder and update the paths below._
+
 <p align="center" style="display: flex; justify-content: center; gap: 40px;">
 
   <div style="text-align: center; width: 40%;">
@@ -46,6 +50,8 @@ This app allows users to **add, view, search, and manage events** with support f
   </div>
 
 </p>
+
+---
 
 ## 🚀 Getting Started
 
