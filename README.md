@@ -37,11 +37,10 @@ This app allows users to **add, view, search, and manage events** with support f
 
 _Add images to the `assets/` folder and update the paths below._
 
-### 🏠 Home Screen
-<img src="assets/home_screen.png" alt="Home Screen" width="400"/>
-
-### ➕ Add Event Screen
-<img src="assets/add_events.png" alt="Home Screen" width="400"/>
+<p align="center">
+  <img src="assets/home_screen.png" alt="Home Screen" width="45%" style="display:inline-block; margin-right: 10px;"/>
+  <img src="assets/add_event.png" alt="Add Event Screen" width="45%" style="display:inline-block;"/>
+</p>
 
 ---
 
